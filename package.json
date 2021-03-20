@@ -1,0 +1,31 @@
+{
+  "name": "parse",
+  "version": "0.0.0",
+  "description": "Parser combinator library for JavaScript",
+  "main": "build/src/index.js",
+  "scripts": {
+    "test": "genie test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dashkite/parse.git"
+  },
+  "keywords": [
+    "parser",
+    "combinator"
+  ],
+  "author": "Dan Yoder",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/dashkite/parse/issues"
+  },
+  "homepage": "https://github.com/dashkite/parse#readme",
+  "devDependencies": {
+    "@dashkite/brick": "^0.2.0",
+    "@dashkite/genie": "^0.1.0",
+    "amen": "^3.0.0",
+    "coffeescript": "^2.5.1",
+    "panda-quill": "^5.0.0",
+    "source-map-support": "^0.5.19"
+  }
+}
