@@ -3,6 +3,11 @@
   "version": "0.0.0",
   "description": "Parser combinator library for JavaScript",
   "main": "build/src/index.js",
+  "main:coffee": "src/index.coffee",
+  "files": [
+    "build/src",
+    "src"
+  ],
   "scripts": {
     "test": "genie test"
   },
