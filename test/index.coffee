@@ -146,6 +146,22 @@ do ->
 
       ]
 
+    test "list", do ->
+
+      parse = p.parser p.list ",", /^\d+/
+
+      [
+
+        test "success", ->
+          assert.deepEqual ["1", "2", "3", "4"], parse "1,2,3,4"
+
+        test "failure", ->
+          assert.throws (-> parse "1,2,3,"),
+            message: "parse error: expected /^\\d+/, got end of string"
+
+      ]
+
+
     test "expression grammar", do ->
 
       parse = p.parser p.pipe [

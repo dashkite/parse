@@ -1,5 +1,5 @@
 {
-  "name": "parse",
+  "name": "@dashkite/parse",
   "version": "0.0.0",
   "description": "Parser combinator library for JavaScript",
   "main": "build/src/index.js",

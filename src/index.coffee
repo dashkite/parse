@@ -102,10 +102,17 @@ test = (name, f) ->
         expected: name
         got: c.value
 
-list = (del, f) ->
-  all [
-    skip del
-    f
+list = (del, x) ->
+  f = pattern x
+  pipe [
+    all [
+      many all [
+        f
+        skip del
+      ]
+      f
+    ]
+    map (ax) -> ax.flat 2
   ]
 
 between = (args...) ->
@@ -143,7 +150,8 @@ parser = (f) ->
       # 1. find position
       # 2. count the newlines up until that position
       # 3. count characters until the first newline prior to position
-      throw new Error "parse error: expected #{expected}, got '#{got}'"
+      got = if got == "" then "end of string" else "'#{got}'"
+      throw new Error "parse error: expected #{expected}, got #{got}"
     else if m.rest.length > 0
       throw new Error "parse error:
         expected end of input, got '#{m.rest[..10]}'"
