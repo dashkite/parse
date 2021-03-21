@@ -72,8 +72,8 @@ many = (x) ->
         value.push m.value if m.value?
         d = {d..., m..., value}
       else
-        return d
-    return d
+        break
+    return {d..., value}
 
 optional = (x) ->
   f = pattern x
@@ -95,7 +95,7 @@ map = (f) -> (c) -> {c..., value: (f c.value)}
 
 test = (name, f) ->
   (c) ->
-    if f c
+    if f c.value
       c
     else
       error:
@@ -138,6 +138,8 @@ merge = (key) -> map (value) -> Object.assign {}, value...
 
 forward = (f) -> (c) -> f() c
 
+log = (c) -> console.log c ; c
+
 parser = (f) ->
   (s) ->
     m = f
@@ -178,5 +180,6 @@ export {
   tag
   merge
   forward
+  log
   parser
 }

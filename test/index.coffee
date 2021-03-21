@@ -161,6 +161,22 @@ do ->
 
       ]
 
+    test "test", do ->
+
+      parse = p.parser p.pipe [
+        p.match p.re /^\d+/, "digit"
+        p.map (value) -> Number.parseInt value, 10
+        p.test "an odd number", (value) -> value % 2 == 0
+      ]
+
+      [
+        test "success", ->
+          assert.equal 4, parse "4"
+
+        test "failure", ->
+          assert.throws (-> parse "5"),
+            message: "parse error: expected an odd number, got '5'"
+      ]
 
     test "expression grammar", do ->
 
