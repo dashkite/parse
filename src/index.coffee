@@ -15,24 +15,33 @@ ws = re /^\s+/, "whitespace"
 
 text = (x) ->
   ({rest}) ->
-    if (p = rest.indexOf x) >= 0
+    if rest[..(x.length - 1)] == x
       value: x
-      rest: rest[p..]
+      rest: rest[(x.length)..]
     else
       error:
-        expected: x
+        expected: "'#{x}'"
         got: rest[..10]
 
-match = (p) ->
-  (c) -> {c..., (p c)...}
+pattern = (x) ->
+  if x.constructor == String
+    text x
+  else if x.constructor == RegExp
+    re x
+  else x
 
-skip = (p) ->
+match = (x) ->
+  f = pattern x
+  (c) -> {c..., (f c)...}
+
+skip = (x) ->
+  f = pattern x
   (c) ->
-    if !(m = p c).error?
+    if !(m = f c).error?
       {rest} = m
-      {c..., rest}
+      {c..., rest, value: undefined}
     else
-      {c..., m...}
+      {c..., m..., value: undefined}
 
 all = (fx) ->
   (c) ->
@@ -43,8 +52,8 @@ all = (fx) ->
         value.push m.value if m.value?
         d = {d..., m..., value}
       else
-        # todo: handle error based on where we got
         return {c..., m...}
+    d
 
 any = (fx) ->
   (c) ->
@@ -53,7 +62,8 @@ any = (fx) ->
         return {c..., m...}
     {c..., m...}
 
-many = (f) ->
+many = (x) ->
+  f = pattern x
   (c) ->
     d = c
     value = []
@@ -65,6 +75,14 @@ many = (f) ->
         return d
     return d
 
+optional = (x) ->
+  f = pattern x
+  (c) ->
+    if !(m = f c).error?
+      {c..., m...}
+    else
+      {c..., value: undefined}
+
 pipe = (fx) ->
   (c) ->
     d = c
@@ -72,6 +90,17 @@ pipe = (fx) ->
       if (d = f d).error?
         return d
     d
+
+map = (f) -> (c) -> {c..., value: (f c.value)}
+
+test = (name, f) ->
+  (c) ->
+    if f c
+      c
+    else
+      error:
+        expected: name
+        got: c.value
 
 list = (del, f) ->
   all [
@@ -84,11 +113,17 @@ between = (args...) ->
     when 1 then throw new ArgumentError "between: needs 2 arguments"
     when 2 then [ args[0], args[0], args[1] ]
     else args
-  all [
-    skip d1
-    f
-    skip d2
+
+  pipe [
+    all [
+      skip d1
+      f
+      skip d2
+    ]
+    map ([value]) -> value
   ]
+
+trim = (x) -> skip optional x
 
 tag = (key) -> map (value) -> [key]: value
 
@@ -104,7 +139,14 @@ parser = (f) ->
       data: {}
     if m.error?
       {expected, got} = m.error
+      # TODO compute line-number and position
+      # 1. find position
+      # 2. count the newlines up until that position
+      # 3. count characters until the first newline prior to position
       throw new Error "parse error: expected #{expected}, got '#{got}'"
+    else if m.rest.length > 0
+      throw new Error "parse error:
+        expected end of input, got '#{m.rest[..10]}'"
     else
       m.value
 
@@ -118,9 +160,13 @@ export {
   all
   any
   many
+  optional
   pipe
+  map
+  test
   list
   between
+  trim
   tag
   merge
   forward
