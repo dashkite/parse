@@ -11,7 +11,7 @@ re = (x, expected) ->
 
 word = re /^\w+/, "word"
 
-ws = re /^\s+/, "whitespace"
+ws = re /^[ \t]+/s, "whitespace"
 
 text = (x) ->
   ({rest}) ->
@@ -51,7 +51,7 @@ eof = (c) ->
       expected: "end of input"
       got: c.rest
 
-eol = skip re /^(\n|$)/, "end of line"
+eol = re /^(\n|$)/, "end of line"
 
 all = (fx) ->
   (c) ->
@@ -143,12 +143,13 @@ test = (name, f) ->
         expected: name
         got: c.value.toString()
 
-list = (del, x) ->
+list = (d, x) ->
   f = pattern x
+  d = pattern d
   flatten all [
     flatten many all [
       f
-      skip del
+      skip d
     ]
     f
   ]
