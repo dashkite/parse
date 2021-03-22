@@ -178,7 +178,66 @@ do ->
             message: "parse error: expected an odd number, got '5'"
       ]
 
-    test "expression grammar", do ->
+    test "scenario: nested list, significant whitespace", do ->
+
+      bol = p.skip p.pipe [
+        p.get "indent"
+        p.apply p.all
+      ]
+
+      block = (f, g) -> p.push "indent", f, g
+
+      item = p.first p.all [
+        bol
+        p.any [
+          p.first p.all [
+            p.skip "- "
+            p.word
+            p.skip p.eol
+          ]
+          block (p.text "  "), p.forward -> list
+        ]
+      ]
+
+      list = p.pipe [
+        p.lookahead /^\s*\-/, "list"
+        p.many item
+      ]
+
+      parse = p.parser p.pipe [
+        p.set "indent", []
+        list
+      ]
+
+      [
+
+        test "success", ->
+
+          assert.deepEqual [
+            "fruits"
+            [ "apples", "bananas" ]
+            "vegetables"
+            [ "potatos" ]
+          ], parse """
+              - fruits
+                - apples
+                - bananas
+              - vegetables
+                - potatos
+              """
+
+        test "failure", ->
+
+          assert.throws (->
+            parse """
+              - fruits
+                apples
+              """),
+            message: "parse error: expected end of input, got '  apples'"
+      ]
+
+
+    test "scenario: expression grammar", do ->
 
       parse = p.parser p.pipe [
         p.all [

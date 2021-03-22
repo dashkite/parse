@@ -7,7 +7,7 @@ re = (x, expected) ->
     else
       error:
         expected: expected ? x.toString()
-        got: rest[..10]
+        got: rest
 
 word = re /^\w+/, "word"
 
@@ -21,7 +21,7 @@ text = (x) ->
     else
       error:
         expected: "'#{x}'"
-        got: rest[..10]
+        got: rest
 
 pattern = (x) ->
   if x.constructor == String
@@ -42,6 +42,16 @@ skip = (x) ->
       {c..., rest, value: undefined}
     else
       {c..., m..., value: undefined}
+
+eof = (c) ->
+  if (c.rest.length == 0)
+    c
+  else
+    error:
+      expected: "end of input"
+      got: c.rest
+
+eol = skip re /^(\n|$)/, "end of line"
 
 all = (fx) ->
   (c) ->
@@ -83,6 +93,19 @@ optional = (x) ->
     else
       {c..., value: undefined}
 
+lookahead = (x, expected) ->
+  f = pattern x
+  (c) ->
+    if !(m = f c).error?
+      c
+    else
+      {
+        c...
+        error:
+          expected: expected ? x.toString()
+          got: c.rest
+      }
+
 pipe = (fx) ->
   (c) ->
     d = c
@@ -93,6 +116,24 @@ pipe = (fx) ->
 
 map = (f) -> (c) -> {c..., value: (f c.value)}
 
+flatten = (f) ->
+  pipe [
+    f
+    map (ax) -> ax.flat 1
+  ]
+
+first = (f) ->
+  pipe [
+    f
+    map (ax) -> ax[0]
+  ]
+
+last = (f) ->
+  pipe [
+    f
+    map (ax) -> ax[ax.length - 1]
+  ]
+
 test = (name, f) ->
   (c) ->
     if f c.value
@@ -100,19 +141,16 @@ test = (name, f) ->
     else
       error:
         expected: name
-        got: c.value
+        got: c.value.toString()
 
 list = (del, x) ->
   f = pattern x
-  pipe [
-    all [
-      many all [
-        f
-        skip del
-      ]
+  flatten all [
+    flatten many all [
       f
+      skip del
     ]
-    map (ax) -> ax.flat 2
+    f
   ]
 
 between = (args...) ->
@@ -138,7 +176,34 @@ merge = (key) -> map (value) -> Object.assign {}, value...
 
 forward = (f) -> (c) -> f() c
 
-log = (c) -> console.log c ; c
+log = (f) ->
+  (c) ->
+    console.log "input", c
+    d = f c
+    console.log "output", d
+    d
+
+set = (key, value) ->
+  (c) ->
+    value ?= c.value
+    (c.data ?= {})[key] = value
+    c
+
+get = (key) ->
+  (c) ->
+    value = (c.data ?= {})[key]
+    {c..., value}
+
+push = (key, value, f) ->
+  (c) ->
+    s = ((c.data ?= {})[key] ?= [])
+    s.unshift value
+    d = f c
+    s.shift()
+    d
+
+apply = (f) ->
+  (c) -> (f c.value) c
 
 parser = (f) ->
   (s) ->
@@ -146,13 +211,14 @@ parser = (f) ->
       original: s
       rest: s
       data: {}
+
     if m.error?
-      {expected, got} = m.error
       # TODO compute line-number and position
       # 1. find position
       # 2. count the newlines up until that position
       # 3. count characters until the first newline prior to position
-      got = if got == "" then "end of string" else "'#{got}'"
+      {expected, got} = m.error
+      got = if got == "" then "end of string" else "'#{got[..10]}'"
       throw new Error "parse error: expected #{expected}, got #{got}"
     else if m.rest.length > 0
       throw new Error "parse error:
@@ -165,14 +231,20 @@ export {
   word
   ws
   text
+  eof
+  eol
   match
   skip
   all
   any
   many
   optional
+  lookahead
   pipe
   map
+  flatten
+  first
+  last
   test
   list
   between
@@ -181,5 +253,9 @@ export {
   merge
   forward
   log
+  get
+  set
+  push
+  apply
   parser
 }
