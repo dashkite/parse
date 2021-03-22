@@ -1,6 +1,6 @@
 {
   "name": "@dashkite/parse",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Parser combinator library for JavaScript",
   "main": "build/src/index.js",
   "main:coffee": "src/index.coffee",
