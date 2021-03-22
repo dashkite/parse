@@ -181,7 +181,7 @@ do ->
     test "scenario: nested list, significant whitespace", do ->
 
       bol = p.skip p.pipe [
-        p.get "indent"
+        p.get "indent", []
         p.apply p.all
       ]
 
@@ -204,11 +204,8 @@ do ->
         p.many item
       ]
 
-      parse = p.parser p.pipe [
-        p.set "indent", []
-        list
-      ]
-
+      parse = p.parser list
+      
       [
 
         test "success", ->

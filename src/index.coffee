@@ -189,9 +189,9 @@ set = (key, value) ->
     (c.data ?= {})[key] = value
     c
 
-get = (key) ->
+get = (key, _default) ->
   (c) ->
-    value = (c.data ?= {})[key]
+    value = ((c.data ?= {})[key] ?= _default)
     {c..., value}
 
 push = (key, value, f) ->
