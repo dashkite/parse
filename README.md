@@ -101,17 +101,20 @@ Use to consume input and produce values or errors. Typically used within higher-
 
 Use to manipulate the parsing context to manage custom state or transform the value. Typically used within `pipe`.
 
-| Name    | Arguments           | Description                                                  |
-| ------- | ------------------- | ------------------------------------------------------------ |
-| map     | transform           | Passes the context value into the given *transform* function and returning a new context with the returned value. |
-| flatten | -                   | Does a shallow (depth of one) array flatten on the context value. |
-| first   | -                   | Returns the first element of the context value.              |
-| last    | -                   | Returns the last element of the context value.               |
-| test    | name, predicate     | Passes the context value into the given *predicate* function. If the predicate returns true, the context is returned unchanged. Otherwise, a new context is produced with an error using the given *name*. |
-| tag     | key                 | Return the context value as an object with the given property *key*. Use in conjunction with `merge` to build up objects during parsing. |
-| merge   | -                   | Merge an array of objects as the context value into a single object. |
-| set     | key, value          | Set the custom state of the parser for a given property *key* to *value*. If *value* is not given, the property is set to the context value. |
-| get     | key                 | Gets the given custom state property and sets it as the context value. |
-| push    | key, value, pattern | Pushes the given *value* onto a stack defined by the custom state property *key* and attempts to match the pattern. Pops the stack and returns the result of the attempted match. |
-| pipe    | array               | Attempts to match all of the given patterns but short-circuits if any produce an error. Does not directly modify the context value (unlike `all`, which accumulates the matched patterns into an array). Use to build up a sequence of actions. |
+| Name     | Arguments           | Description                                                  |
+| -------- | ------------------- | ------------------------------------------------------------ |
+| map      | transform           | Passes the context value into the given *transform* function and returning a new context with the returned value. |
+| flatten  | -                   | Does a shallow (depth of one) array flatten on the context value. |
+| first    | -                   | Returns the first element of the context value.              |
+| last     | -                   | Returns the last element of the context value.               |
+| test     | name, predicate     | Passes the context value into the given *predicate* function. If the predicate returns true, the context is returned unchanged. Otherwise, a new context is produced with an error using the given *name*. |
+| tag      | key                 | Return the context value as an object with the given property *key*. Use with `merge` to build up objects during parsing. |
+| merge    | -                   | Merge an array of objects as the context value into a single object. |
+| append   | skey, pattern       | Match the given *pattern* and append the resulting value to the context value, or to custom data using the optional _skey_. |
+| assign   | skey, key, pattern  | Match the given *pattern* and assign the resulting value to the context value property _key_, or to custom data using the optional _skey_. |
+| preserve | pattern             | Match pattern but keep the original context value. Use with _append_ or _assign_ to build up a result using the context value rather than custom data. |
+| set      | key, value          | Set the custom state of the parser for a given property *key* to *value*. If *value* is not given, the property is set to the context value. |
+| get      | key                 | Gets the given custom state property and sets it as the context value. |
+| push     | key, value, pattern | Pushes the given *value* onto a stack defined by the custom state property *key* and attempts to match the pattern. Pops the stack and returns the result of the attempted match. |
+| pipe     | array               | Attempts to match all of the given patterns but short-circuits if any produce an error. Does not directly modify the context value (unlike `all`, which accumulates the matched patterns into an array). Use to build up a sequence of actions. |
 
