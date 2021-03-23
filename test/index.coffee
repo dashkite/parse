@@ -20,7 +20,7 @@ do ->
         test "failure", ->
           parse = p.parser p.re /\d+/, "digits"
           assert.throws (-> parse "abc"),
-            message: "parse error: expected digits, got 'abc'"
+            message: 'parse error: expected digits, got "abc"'
 
       ]
 
@@ -35,11 +35,11 @@ do ->
 
         test "failure", ->
           assert.throws (-> parse "goodbye"),
-            message: "parse error: expected 'hello', got 'goodbye'"
+            message: 'parse error: expected "hello", got "goodbye"'
 
         test "incomplete", ->
           assert.throws (-> parse "hello!"),
-            message: "parse error: expected end of input, got '!'"
+            message: 'parse error: expected end of input, got "!"'
 
       ]
 
@@ -53,7 +53,7 @@ do ->
 
         test "failure", ->
           assert.throws ( -> parse "goodbye"),
-            message: "parse error: expected 'hello', got 'goodbye'"
+            message: 'parse error: expected "hello", got "goodbye"'
 
       ]
 
@@ -71,7 +71,7 @@ do ->
 
         test "failure", ->
           assert.throws (-> parse "hello"),
-            message: "parse error: expected whitespace, got 'hello'"
+            message: 'parse error: expected whitespace, got "hello"'
 
       ]
 
@@ -89,7 +89,7 @@ do ->
 
         test "failure", ->
           assert.throws (-> parse "ciao"),
-            message: "parse error: expected 'goodbye', got 'ciao'"
+            message: 'parse error: expected "goodbye", got "ciao"'
       ]
 
     test "many, text", do ->
@@ -103,7 +103,7 @@ do ->
 
         test "failure", ->
           assert.throws (-> parse "--+-"),
-            message: "parse error: expected end of input, got '+-'"
+            message: 'parse error: expected end of input, got "+-"'
 
       ]
 
@@ -122,7 +122,7 @@ do ->
 
         test "failure", ->
           assert.throws (-> parse "  goodbye"),
-            message: "parse error: expected 'hello', got 'goodbye'"
+            message: 'parse error: expected "hello", got "goodbye"'
 
 
       ]
@@ -138,10 +138,10 @@ do ->
 
         test "failure", ->
           assert.throws (-> parse '"goodbye"'),
-            message: "parse error: expected 'hello', got 'goodbye\"'"
+            message: 'parse error: expected "hello", got "goodbye\\""'
 
           assert.throws (-> parse 'hello'),
-            message: "parse error: expected '\"', got 'hello'"
+            message: 'parse error: expected "\\"", got "hello"'
 
 
       ]
@@ -175,7 +175,7 @@ do ->
 
         test "failure", ->
           assert.throws (-> parse "5"),
-            message: "parse error: expected an odd number, got '5'"
+            message: 'parse error: expected an odd number, got "5"'
       ]
 
     test "scenario: nested list, significant whitespace", do ->
@@ -205,7 +205,7 @@ do ->
       ]
 
       parse = p.parser list
-      
+
       [
 
         test "success", ->
@@ -230,7 +230,7 @@ do ->
               - fruits
                 apples
               """),
-            message: "parse error: expected end of input, got '  apples'"
+            message: 'parse error: expected end of input, got "  apples"'
       ]
 
 
@@ -259,7 +259,7 @@ do ->
 
           test "failure", ->
             assert.throws (-> parse "7 + a"),
-              message: "parse error: expected digit, got 'a'"
+              message: 'parse error: expected digit, got "a"'
       ]
 
   ]

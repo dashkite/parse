@@ -1,3 +1,7 @@
+inspect = (s) ->
+  switch s.constructor
+    when String then JSON.stringify s
+    else s.toString()
 
 re = (x, expected) ->
   ({rest}) ->
@@ -6,7 +10,7 @@ re = (x, expected) ->
       rest: rest[(m.index + m[0].length)..]
     else
       error:
-        expected: expected ? x.toString()
+        expected: expected ? inspect x
         got: rest
 
 word = re /^\w+/, "word"
@@ -20,7 +24,7 @@ text = (x) ->
       rest: rest[(x.length)..]
     else
       error:
-        expected: "'#{x}'"
+        expected: inspect x
         got: rest
 
 pattern = (x) ->
@@ -102,7 +106,7 @@ lookahead = (x, expected) ->
       {
         c...
         error:
-          expected: expected ? x.toString()
+          expected: expected ? inspect x
           got: c.rest
       }
 
@@ -173,7 +177,7 @@ trim = (x) -> skip optional x
 
 tag = (key) -> map (value) -> [key]: value
 
-merge = (key) -> map (value) -> Object.assign {}, value...
+merge = map (value) -> Object.assign {}, value...
 
 forward = (f) -> (c) -> f() c
 
@@ -219,11 +223,12 @@ parser = (f) ->
       # 2. count the newlines up until that position
       # 3. count characters until the first newline prior to position
       {expected, got} = m.error
-      got = if got == "" then "end of string" else "'#{got[..10]}'"
-      throw new Error "parse error: expected #{expected}, got #{got}"
+      got = if got == "" then "end of string" else inspect got[..10]
+      throw new Error "parse error:
+        expected #{expected}, got #{got}"
     else if m.rest.length > 0
       throw new Error "parse error:
-        expected end of input, got '#{m.rest[..10]}'"
+        expected end of input, got #{inspect m.rest[..10]}"
     else
       m.value
 
