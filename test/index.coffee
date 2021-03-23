@@ -246,6 +246,27 @@ do ->
 
       ]
 
+    test "append custom data", do ->
+
+      parse = p.parser p.pipe [
+        p.append "result", p.text "hello"
+        p.trim p.ws
+        p.append "result", p.text "alice"
+        p.get "result"
+      ]
+
+      [
+
+        test "success", ->
+          assert.deepEqual [ "hello", "alice" ],
+            parse "hello alice"
+
+        test "failure", ->
+          assert.throws (-> parse "goodbye"),
+            message: 'parse error: expected "hello", got "goodbye"'
+
+      ]
+
     test "assign", do ->
 
       parse = p.parser p.pipe [
@@ -266,6 +287,26 @@ do ->
 
       ]
 
+    test "assign custom data", do ->
+
+      parse = p.parser p.pipe [
+        p.assign "result", "greeting", p.match p.text "hello"
+        p.trim p.ws
+        p.assign "result", "name", p.text "alice"
+        p.get "result"
+      ]
+
+      [
+
+        test "success", ->
+          assert.deepEqual { name: "alice", greeting: "hello" },
+            parse "hello alice"
+
+        test "failure", ->
+          assert.throws (-> parse "goodbye"),
+            message: 'parse error: expected "hello", got "goodbye"'
+
+      ]
 
     test "scenarios", [
 

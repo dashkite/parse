@@ -164,7 +164,7 @@ list = (d, x) ->
 
 between = (args...) ->
   [ d1, d2, f ] = switch args.length
-    when 1 then throw new ArgumentError "between: needs 2 arguments"
+    when 1 then throw new Error "between: needs 2 arguments"
     when 2 then [ args[0], args[0], args[1] ]
     else args
 
@@ -183,7 +183,13 @@ tag = (key) -> map (value) -> [key]: value
 
 merge = map (value) -> Object.assign {}, value...
 
-append = (x) ->
+append = (args...) ->
+  switch args.length
+    when 1 then _append args...
+    when 2 then _appendData args...
+    else throw new Error "append: needs 1 or 2 arguments"
+
+_append = (x) ->
   f = pattern x
   (c) ->
     if !(m = f c).error?
@@ -198,7 +204,26 @@ append = (x) ->
     else
       m
 
-assign = (key, x) ->
+_appendData = (skey, x) ->
+  f = pattern x
+  (c) ->
+    if !(m = f c).error?
+      m.data[skey] = if c.data[skey]?
+        if Array.isArray c.data[skey]
+          [ c.data[skey]..., m.value ]
+        else
+          [ c.data[skey], m.value ]
+      else
+        [ m.value ]
+    m
+
+assign = (args...) ->
+  switch args.length
+    when 2 then _assign args...
+    when 3 then _assignData args...
+    else throw new Error "append: needs 2 or 3 arguments"
+
+_assign = (key, x) ->
   f = pattern x
   (c) ->
     if !(m = f c).error?
@@ -209,6 +234,16 @@ assign = (key, x) ->
       {m..., value}
     else
       m
+
+_assignData = (skey, key, x) ->
+  f = pattern x
+  (c) ->
+    if !(m = f c).error?
+      m.data[skey] = if c.data[skey]?
+        {c.data[skey]..., [key]: m.value}
+      else
+        [key]: m.value
+    m
 
 preserve = (f) ->
   (c) -> {(f c)..., value: c.value}
