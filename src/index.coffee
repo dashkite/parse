@@ -4,28 +4,32 @@ inspect = (s) ->
     else s.toString()
 
 re = (x, expected) ->
-  ({rest}) ->
-    if (m = (rest.match x))?
+  (c) ->
+    if (m = (c.rest.match x))?
+      {c...
       value: m[0]
-      rest: rest[(m.index + m[0].length)..]
+      rest: c.rest[(m.index + m[0].length)..]}
     else
+      {c...
       error:
         expected: expected ? inspect x
-        got: rest
+        got: c.rest}
 
 word = re /^\w+/, "word"
 
 ws = re /^[ \t]+/s, "whitespace"
 
 text = (x) ->
-  ({rest}) ->
-    if rest[..(x.length - 1)] == x
+  (c) ->
+    if c.rest[..(x.length - 1)] == x
+      {c...
       value: x
-      rest: rest[(x.length)..]
+      rest: c.rest[(x.length)..]}
     else
+      {c...
       error:
         expected: inspect x
-        got: rest
+        got: c.rest}
 
 pattern = (x) ->
   if x.constructor == String
@@ -51,9 +55,10 @@ eof = (c) ->
   if (c.rest.length == 0)
     c
   else
+    {c...
     error:
       expected: "end of input"
-      got: c.rest
+      got: c.rest}
 
 eol = re /^(\n|$)/, "end of line"
 
@@ -103,12 +108,10 @@ lookahead = (x, expected) ->
     if !(m = f c).error?
       c
     else
-      {
-        c...
-        error:
-          expected: expected ? inspect x
-          got: c.rest
-      }
+      {c...
+      error:
+        expected: expected ? inspect x
+        got: c.rest}
 
 pipe = (fx) ->
   (c) ->
@@ -143,9 +146,10 @@ test = (name, f) ->
     if f c.value
       c
     else
+      {c...
       error:
         expected: name
-        got: c.value.toString()
+        got: c.value.toString()}
 
 list = (d, x) ->
   f = pattern x
@@ -178,6 +182,36 @@ trim = (x) -> skip optional x
 tag = (key) -> map (value) -> [key]: value
 
 merge = map (value) -> Object.assign {}, value...
+
+append = (x) ->
+  f = pattern x
+  (c) ->
+    if !(m = f c).error?
+      value = if c.value?
+        if Array.isArray c.value
+          [ c.value..., m.value ]
+        else
+          [ c.value, m.value ]
+      else
+        [ m.value ]
+      {m..., value}
+    else
+      m
+
+assign = (key, x) ->
+  f = pattern x
+  (c) ->
+    if !(m = f c).error?
+      value = if c.value?
+        {c.value..., [key]: m.value}
+      else
+        [key]: m.value
+      {m..., value}
+    else
+      m
+
+preserve = (f) ->
+  (c) -> {(f c)..., value: c.value}
 
 forward = (f) -> (c) -> f() c
 
@@ -257,6 +291,9 @@ export {
   trim
   tag
   merge
+  append
+  assign
+  preserve
   forward
   log
   get

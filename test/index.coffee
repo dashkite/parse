@@ -178,88 +178,182 @@ do ->
             message: 'parse error: expected an odd number, got "5"'
       ]
 
-    test "scenario: nested list, significant whitespace", do ->
+    test "tag", do ->
 
-      bol = p.skip p.pipe [
-        p.get "indent", []
-        p.apply p.all
+      parse = p.parser p.pipe [
+        p.text "hello"
+        p.tag "greeting"
       ]
-
-      block = (f, g) -> p.push "indent", f, g
-
-      item = p.first p.all [
-        bol
-        p.any [
-          p.first p.all [
-            p.skip "- "
-            p.word
-            p.skip p.eol
-          ]
-          block (p.text "  "), p.forward -> list
-        ]
-      ]
-
-      list = p.pipe [
-        p.lookahead /^\s*\-/, "list"
-        p.many item
-      ]
-
-      parse = p.parser list
 
       [
 
         test "success", ->
-
-          assert.deepEqual [
-            "fruits"
-            [ "apples", "bananas" ]
-            "vegetables"
-            [ "potatos" ]
-          ], parse """
-              - fruits
-                - apples
-                - bananas
-              - vegetables
-                - potatos
-              """
+          assert.deepEqual { greeting: "hello" },
+            parse "hello"
 
         test "failure", ->
+          assert.throws (-> parse "goodbye"),
+            message: 'parse error: expected "hello", got "goodbye"'
 
-          assert.throws (->
-            parse """
-              - fruits
-                apples
-              """),
-            message: 'parse error: expected end of input, got "  apples"'
       ]
 
-
-    test "scenario: expression grammar", do ->
+    test "merge", do ->
 
       parse = p.parser p.pipe [
         p.all [
-          p.re /^\d+/, "digit"
+          p.pipe [
+            p.text "hello"
+            p.tag "greeting"
+          ]
           p.trim p.ws
-          p.re /^(\+|-)/, "operator"
-          p.trim p.ws
-          p.re /^\d+/, "digit"
+          p.pipe [
+            p.text "alice"
+            p.tag "name"
+          ]
         ]
-        p.map ([x, op, y]) ->
-          x = Number.parseInt x, 10
-          y = Number.parseInt y, 10
-          switch op
-            when "+" then x + y
-            when "-" then x - y
+        p.merge
       ]
 
       [
+
+        test "success", ->
+          assert.deepEqual { name: "alice", greeting: "hello" },
+            parse "hello alice"
+
+        test "failure", ->
+          assert.throws (-> parse "goodbye alice"),
+            message: 'parse error: expected "hello", got "goodbye ali"'
+
+      ]
+
+    test "append", do ->
+
+      parse = p.parser p.pipe [
+        p.append p.text "hello"
+        p.preserve p.trim p.ws
+        p.log p.append p.text "alice"
+      ]
+
+      [
+
+        test "success", ->
+          assert.deepEqual [ "hello", "alice" ],
+            parse "hello alice"
+
+        test "failure", ->
+          assert.throws (-> parse "goodbye"),
+            message: 'parse error: expected "hello", got "goodbye"'
+
+      ]
+
+    test "assign", do ->
+
+      parse = p.parser p.pipe [
+        p.assign "greeting", p.match p.text "hello"
+        p.preserve p.trim p.ws
+        p.assign "name", p.text "alice"
+      ]
+
+      [
+
+        test "success", ->
+          assert.deepEqual { name: "alice", greeting: "hello" },
+            parse "hello alice"
+
+        test "failure", ->
+          assert.throws (-> parse "goodbye"),
+            message: 'parse error: expected "hello", got "goodbye"'
+
+      ]
+
+
+    test "scenarios", [
+
+      test "nested list, significant whitespace", do ->
+
+        bol = p.skip p.pipe [
+          p.get "indent", []
+          p.apply p.all
+        ]
+
+        block = (f, g) -> p.push "indent", f, g
+
+        item = p.first p.all [
+          bol
+          p.any [
+            p.first p.all [
+              p.skip "- "
+              p.word
+              p.skip p.eol
+            ]
+            block (p.text "  "), p.forward -> list
+          ]
+        ]
+
+        list = p.pipe [
+          p.lookahead /^\s*\-/, "list"
+          p.many item
+        ]
+
+        parse = p.parser list
+
+        [
+
           test "success", ->
-            assert.equal 8, parse "5 + 3"
-            assert.equal 2, parse "5 - 3"
+
+            assert.deepEqual [
+              "fruits"
+              [ "apples", "bananas" ]
+              "vegetables"
+              [ "potatos" ]
+            ], parse """
+                - fruits
+                  - apples
+                  - bananas
+                - vegetables
+                  - potatos
+                """
 
           test "failure", ->
-            assert.throws (-> parse "7 + a"),
-              message: 'parse error: expected digit, got "a"'
+
+            assert.throws (->
+              parse """
+                - fruits
+                  apples
+                """),
+              message: 'parse error: expected end of input, got "  apples"'
+        ]
+
+
+      test "expression grammar", do ->
+
+        parse = p.parser p.pipe [
+          p.all [
+            p.re /^\d+/, "digit"
+            p.trim p.ws
+            p.re /^(\+|-)/, "operator"
+            p.trim p.ws
+            p.re /^\d+/, "digit"
+          ]
+          p.map ([x, op, y]) ->
+            x = Number.parseInt x, 10
+            y = Number.parseInt y, 10
+            switch op
+              when "+" then x + y
+              when "-" then x - y
+        ]
+
+        [
+            test "success", ->
+              assert.equal 8, parse "5 + 3"
+              assert.equal 2, parse "5 - 3"
+
+            test "failure", ->
+              assert.throws (-> parse "7 + a"),
+                message: 'parse error: expected digit, got "a"'
+        ]
+
+
       ]
 
   ]
