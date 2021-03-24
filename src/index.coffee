@@ -201,21 +201,22 @@ _append = (x) ->
       else
         [ m.value ]
       {m..., value}
-    else
-      m
+    else m
 
 _appendData = (skey, x) ->
   f = pattern x
   (c) ->
     if !(m = f c).error?
-      m.data[skey] = if c.data[skey]?
+      data = {m.data...}
+      data[skey] = if c.data[skey]?
         if Array.isArray c.data[skey]
           [ c.data[skey]..., m.value ]
         else
           [ c.data[skey], m.value ]
       else
         [ m.value ]
-    m
+      {m..., data}
+    else m
 
 assign = (args...) ->
   switch args.length
@@ -232,18 +233,19 @@ _assign = (key, x) ->
       else
         [key]: m.value
       {m..., value}
-    else
-      m
+    else m
 
 _assignData = (skey, key, x) ->
   f = pattern x
   (c) ->
     if !(m = f c).error?
-      m.data[skey] = if c.data[skey]?
+      data = {m.data...}
+      data[skey] = if c.data[skey]?
         {c.data[skey]..., [key]: m.value}
       else
         [key]: m.value
-    m
+      {m..., data}
+    else m
 
 preserve = (f) ->
   (c) -> {(f c)..., value: c.value}
