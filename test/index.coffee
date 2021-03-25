@@ -1,6 +1,5 @@
 import assert from "assert"
 import {print, test, success} from "amen"
-import "source-map-support/register"
 
 import * as p from "../src"
 

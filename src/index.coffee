@@ -185,11 +185,11 @@ merge = map (value) -> Object.assign {}, value...
 
 append = (args...) ->
   switch args.length
-    when 1 then _append args...
+    when 1 then _appendValue args...
     when 2 then _appendData args...
     else throw new Error "append: needs 1 or 2 arguments"
 
-_append = (x) ->
+_appendValue = (x) ->
   f = pattern x
   (c) ->
     if !(m = f c).error?
@@ -220,11 +220,11 @@ _appendData = (skey, x) ->
 
 assign = (args...) ->
   switch args.length
-    when 2 then _assign args...
+    when 2 then _assignValue args...
     when 3 then _assignData args...
     else throw new Error "append: needs 2 or 3 arguments"
 
-_assign = (key, x) ->
+_assignValue = (key, x) ->
   f = pattern x
   (c) ->
     if !(m = f c).error?
