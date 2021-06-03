@@ -1,5 +1,6 @@
-import assert from "assert"
-import {print, test, success} from "amen"
+import assert from "@dashkite/assert"
+import {test, success} from "@dashkite/amen"
+import print from "@dashkite/amen-console"
 
 import * as p from "../src"
 
@@ -230,7 +231,7 @@ do ->
       parse = p.parser p.pipe [
         p.append p.text "hello"
         p.preserve p.trim p.ws
-        p.log p.append p.text "alice"
+        p.append p.text "alice"
       ]
 
       [
