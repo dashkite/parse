@@ -143,11 +143,20 @@ pipe = (fx) ->
 
 map = (f) -> (c) -> {c..., value: (f c.value)}
 
-flatten = (f) ->
-  pipe [
-    f
-    map (ax) -> ax.flat 1
-  ]
+_flatten = (ax) ->
+  if Array.isArray ax
+    result = []
+    for x in ax
+      y = _flatten x
+      if Array.isArray y
+        result = result.concat y
+      else
+        result.push y
+    result
+  else
+    ax
+
+flatten = map (ax) -> _flatten ax
 
 first = map (ax) -> ax[0]
 
@@ -178,12 +187,15 @@ testContext = (name, f) ->
 list = (d, x) ->
   f = pattern x
   d = pattern d
-  flatten all [
-    flatten many all [
+  pipe [
+    all [
+      many all [
+        f
+        skip d
+      ]
       f
-      skip d
     ]
-    f
+    flatten
   ]
 
 between = (args...) ->
