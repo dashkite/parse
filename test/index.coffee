@@ -319,16 +319,22 @@ do ->
 
         block = (f, g) -> p.push "indent", f, g
 
-        item = p.first p.all [
-          bol
-          p.any [
-            p.first p.all [
-              p.skip "- "
-              p.word
-              p.skip p.eol
+        item = p.pipe [
+          p.all [
+            bol
+            p.any [
+              p.pipe [
+                p.all [
+                  p.skip "- "
+                  p.word
+                  p.skip p.eol
+                ]
+                p.first
+              ]
+              block (p.text "  "), p.forward -> list
             ]
-            block (p.text "  "), p.forward -> list
           ]
+          p.first
         ]
 
         list = p.pipe [

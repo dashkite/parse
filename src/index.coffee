@@ -17,6 +17,8 @@ re = (x, expected) ->
 
 word = re /^\w+/, "word"
 
+digits = re /^\d+/
+
 ws = re /^[ \t]+/s, "whitespace"
 
 text = (x) ->
@@ -50,6 +52,21 @@ skip = (x) ->
       {c..., rest, value: undefined}
     else
       {c..., m..., value: undefined}
+
+negate = (x, expected) ->
+  f = pattern x
+  (c) ->
+    if (m = f c).error?
+      value = c.rest[0]
+      rest = c.rest[1..]
+      {c..., value, rest }
+    else
+      {
+        c..., 
+        error:
+          expected: expected ? inspect x
+          got: c.rest
+      }
 
 eof = (c) ->
   if (c.rest.length == 0)
@@ -92,7 +109,10 @@ many = (x) ->
         d = {d..., m..., value}
       else
         break
-    return {d..., value}
+    if value.length > 0
+      {d..., value}
+    else
+      {d..., m...}
 
 optional = (x) ->
   f = pattern x
@@ -129,17 +149,9 @@ flatten = (f) ->
     map (ax) -> ax.flat 1
   ]
 
-first = (f) ->
-  pipe [
-    f
-    map (ax) -> ax[0]
-  ]
+first = map (ax) -> ax[0]
 
-last = (f) ->
-  pipe [
-    f
-    map (ax) -> ax[ax.length - 1]
-  ]
+last = map (ax) -> ax[ ax.length - 1 ]
 
 test = (name, f) ->
   (c) ->
@@ -150,6 +162,18 @@ test = (name, f) ->
       error:
         expected: name
         got: c.value.toString()}
+
+testContext = (name, f) ->
+  (c) ->
+    if f c
+      c
+    else
+      {
+        c...
+        error:
+          expected: name
+          got: c.rest
+      }
 
 list = (d, x) ->
   f = pattern x
@@ -182,6 +206,8 @@ trim = (x) -> skip optional x
 tag = (key) -> map (value) -> [key]: value
 
 merge = map (value) -> Object.assign {}, value...
+
+cat = map (ax) -> ax.join ""
 
 append = (args...) ->
   switch args.length
@@ -299,19 +325,22 @@ parser = (f) ->
         expected #{expected}, got #{got}"
     else if m.rest.length > 0
       throw new Error "parse error:
-        expected end of input, got #{inspect m.rest[..10]}"
+        expected end of input, got #{inspect m.rest[..10]}..."
     else
       m.value
 
 export {
   re
   word
+  digits
   ws
   text
   eof
   eol
+  pattern
   match
   skip
+  negate
   all
   any
   many
@@ -323,11 +352,13 @@ export {
   first
   last
   test
+  testContext
   list
   between
   trim
   tag
   merge
+  cat
   append
   assign
   preserve
