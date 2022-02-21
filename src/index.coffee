@@ -285,6 +285,9 @@ _assignData = (skey, key, x) ->
       {m..., data}
     else m
 
+assignData = (object) ->
+  (c) -> Object.assign c.data, object
+
 preserve = (f) ->
   (c) -> {(f c)..., value: c.value}
 
@@ -373,6 +376,7 @@ export {
   cat
   append
   assign
+  assignData
   preserve
   forward
   log
