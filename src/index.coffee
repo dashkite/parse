@@ -1,7 +1,4 @@
-inspect = (s) ->
-  switch s.constructor
-    when String then JSON.stringify s
-    else s.toString()
+inspect = (s) -> JSON.stringify s
 
 re = (x, expected) ->
   (c) ->
@@ -111,8 +108,15 @@ many = (x) ->
         break
     if value.length > 0
       {d..., value}
-    else
+    else if m?
       {d..., m...}
+    else
+      {
+        d...,
+        error:  
+          expected: inspect x
+          got: "[end of input]"
+      }
 
 optional = (x) ->
   f = pattern x
@@ -170,7 +174,7 @@ test = (name, f) ->
       {c...
       error:
         expected: name
-        got: c.value.toString()}
+        got: inspect c.value }
 
 testContext = (name, f) ->
   (c) ->
