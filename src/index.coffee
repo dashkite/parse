@@ -48,7 +48,7 @@ skip = (x) ->
       {rest} = m
       {c..., rest, value: undefined}
     else
-      {c..., m..., value: undefined}
+      {c..., m...}
 
 negate = (x, expected) ->
   f = pattern x
@@ -87,6 +87,14 @@ all = (fx) ->
       else
         return {c..., m...}
     d
+
+sequence = (delimiter, fx) ->
+  [ gx..., k ] = fx
+  hx = (all [ ( pattern g ), (skip delimiter) ] for g in gx)
+  pipe [
+    all [ hx..., ( pattern k ) ]
+    flatten
+  ]
 
 any = (fx) ->
   (c) ->
@@ -193,7 +201,7 @@ list = (d, x) ->
   d = pattern d
   pipe [
     all [
-      many all [
+      optional many all [
         f
         skip d
       ]
@@ -221,7 +229,19 @@ trim = (x) -> skip optional x
 
 tag = (key) -> map (value) -> [key]: value
 
-merge = map (value) -> Object.assign {}, value...
+merge = (c) ->
+  r = {}
+  for _tag in c.value
+    for key, value of _tag
+      if r[key]?
+        if Array.isArray r[key]
+          r[key].push value
+        else
+          r[key] = [ value ]
+      else
+        r[key] = value
+  c.value = r
+  c
 
 cat = map (ax) -> ax.join ""
 
@@ -361,6 +381,7 @@ export {
   skip
   negate
   all
+  sequence
   any
   many
   optional

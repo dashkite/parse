@@ -146,6 +146,25 @@ do ->
 
       ]
 
+    test "sequence", do ->
+      parse = p.parser p.sequence ",", [
+        /^\d+/
+        /^\d+/
+        /^\d+/
+        /^\d+/
+      ]
+
+      [
+
+        test "success", ->
+          assert.deepEqual ["1", "2", "3", "4"], parse "1,2,3,4"
+
+        test "failure", ->
+          assert.throws (-> parse "1,2,3,"),
+            message: "parse error: expected /^\\d+/, got end of string"
+
+      ]
+
     test "list", do ->
 
       parse = p.parser p.list ",", /^\d+/
@@ -153,7 +172,6 @@ do ->
       [
 
         test "success", ->
-          console.log parse "1,2,3,4"
           assert.deepEqual ["1", "2", "3", "4"], parse "1,2,3,4"
 
         test "failure", ->
