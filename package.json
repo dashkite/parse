@@ -35,6 +35,7 @@
     "@dashkite/amen-console": "^0.0.1",
     "@dashkite/assert": "^0.1.3",
     "@dashkite/genie": "^0.5.2",
-    "@dashkite/genie-presets": "^0.2.2"
+    "@dashkite/genie-presets": "^0.2.2",
+    "@dashkite/sky-presets": "file:../sky-presets"
   }
 }

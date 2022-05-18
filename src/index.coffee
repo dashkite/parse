@@ -225,7 +225,7 @@ between = (args...) ->
     map ([value]) -> value
   ]
 
-trim = (x) -> skip optional x
+strip = (x) -> skip optional x
 
 tag = (key) -> map (value) -> [key]: value
 
@@ -244,6 +244,8 @@ merge = (c) ->
   c
 
 cat = map (ax) -> ax.join ""
+
+trim = map (text) -> text.trim()
 
 append = (args...) ->
   switch args.length
@@ -317,12 +319,13 @@ preserve = (f) ->
 
 forward = (f) -> (c) -> f() c
 
-log = (f) ->
+log = (label) ->
   (c) ->
-    console.log "input", c
-    d = f c
-    console.log "output", d
-    d
+    if label?
+      console.log label, JSON.stringify c, null, 2
+    else
+      console.log JSON.stringify c, null, 2
+    c
 
 set = (key, value) ->
   (c) ->
