@@ -1,3 +1,6 @@
+import * as Fn from "@dashkite/joy/function"
+import * as Type from "@dashkite/joy/type"
+
 inspect = (s) -> JSON.stringify s
 
 re = (x, expected) ->
@@ -88,7 +91,7 @@ all = (fx) ->
         return {c..., m...}
     d
 
-sequence = (delimiter, fx) ->
+sequence = join = Fn.curry (delimiter, fx) ->
   [ gx..., k ] = fx
   hx = (all [ ( pattern g ), (skip delimiter) ] for g in gx)
   pipe [
@@ -172,6 +175,10 @@ flatten = map (ax) -> _flatten ax
 
 first = map (ax) -> ax[0]
 
+second = map (ax) -> ax[1]
+
+third = map (ax) -> ax[2]
+
 last = map (ax) -> ax[ ax.length - 1 ]
 
 test = (name, f) ->
@@ -184,21 +191,10 @@ test = (name, f) ->
         expected: name
         got: inspect c.value }
 
-testContext = (name, f) ->
-  (c) ->
-    if f c
-      c
-    else
-      {
-        c...
-        error:
-          expected: name
-          got: c.rest
-      }
-
-list = (d, x) ->
+list = Fn.curry (d, x) ->
   f = pattern x
   d = pattern d
+
   pipe [
     all [
       optional many all [
@@ -210,11 +206,11 @@ list = (d, x) ->
     flatten
   ]
 
-between = (args...) ->
-  [ d1, d2, f ] = switch args.length
-    when 1 then throw new Error "between: needs 2 arguments"
-    when 2 then [ args[0], args[0], args[1] ]
-    else args
+between = Fn.curry (d, f) ->
+  if Type.isArray d
+    [ d1, d2 ] = d
+  else
+    d1 = d2 = d
 
   pipe [
     all [
@@ -237,7 +233,7 @@ merge = (c) ->
         if Array.isArray r[key]
           r[key].push value
         else
-          r[key] = [ value ]
+          r[key] = [ r[key], value ]
       else
         r[key] = value
   c.value = r
@@ -246,76 +242,6 @@ merge = (c) ->
 cat = map (ax) -> ax.join ""
 
 trim = map (text) -> text.trim()
-
-append = (args...) ->
-  switch args.length
-    when 1 then _appendValue args...
-    when 2 then _appendData args...
-    else throw new Error "append: needs 1 or 2 arguments"
-
-_appendValue = (x) ->
-  f = pattern x
-  (c) ->
-    if !(m = f c).error?
-      value = if c.value?
-        if Array.isArray c.value
-          [ c.value..., m.value ]
-        else
-          [ c.value, m.value ]
-      else
-        [ m.value ]
-      {m..., value}
-    else m
-
-_appendData = (skey, x) ->
-  f = pattern x
-  (c) ->
-    if !(m = f c).error?
-      data = {m.data...}
-      data[skey] = if c.data[skey]?
-        if Array.isArray c.data[skey]
-          [ c.data[skey]..., m.value ]
-        else
-          [ c.data[skey], m.value ]
-      else
-        [ m.value ]
-      {m..., data}
-    else m
-
-assign = (args...) ->
-  switch args.length
-    when 2 then _assignValue args...
-    when 3 then _assignData args...
-    else throw new Error "append: needs 2 or 3 arguments"
-
-_assignValue = (key, x) ->
-  f = pattern x
-  (c) ->
-    if !(m = f c).error?
-      value = if c.value?
-        {c.value..., [key]: m.value}
-      else
-        [key]: m.value
-      {m..., value}
-    else m
-
-_assignData = (skey, key, x) ->
-  f = pattern x
-  (c) ->
-    if !(m = f c).error?
-      data = {m.data...}
-      data[skey] = if c.data[skey]?
-        {c.data[skey]..., [key]: m.value}
-      else
-        [key]: m.value
-      {m..., data}
-    else m
-
-assignData = (object) ->
-  (c) -> Object.assign c.data, object
-
-preserve = (f) ->
-  (c) -> {(f c)..., value: c.value}
 
 forward = (f) -> (c) -> f() c
 
@@ -327,6 +253,10 @@ log = (label) ->
       console.log JSON.stringify c, null, 2
     c
 
+
+assign = (object) ->
+  Fn.tee (c) -> Object.assign c.data, object
+ 
 set = (key, value) ->
   (c) ->
     value ?= c.value
@@ -338,16 +268,8 @@ get = (key, _default) ->
     value = ((c.data ?= {})[key] ?= _default)
     {c..., value}
 
-push = (key, value, f) ->
-  (c) ->
-    s = ((c.data ?= {})[key] ?= [])
-    s.unshift value
-    d = f c
-    s.shift()
-    d
-
-apply = (f) ->
-  (c) -> (f c.value) c
+verify = (expected, f) -> (c) -> 
+  if f c.value then c else { c..., error: { expected, got: c.rest } }
 
 parser = (f) ->
   (s) ->
@@ -382,9 +304,11 @@ export {
   pattern
   match
   skip
+  strip
   negate
   all
   sequence
+  join
   any
   many
   optional
@@ -393,24 +317,19 @@ export {
   map
   flatten
   first
+  second
+  third
   last
   test
-  testContext
   list
   between
   trim
   tag
   merge
   cat
-  append
-  assign
-  assignData
-  preserve
   forward
   log
-  get
-  set
-  push
-  apply
+  assign
+  verify
   parser
 }

@@ -146,8 +146,8 @@ do ->
 
       ]
 
-    test "sequence", do ->
-      parse = p.parser p.sequence ",", [
+    test "join", do ->
+      parse = p.parser p.join ",", [
         /^\d+/
         /^\d+/
         /^\d+/
@@ -224,7 +224,7 @@ do ->
             p.text "hello"
             p.tag "greeting"
           ]
-          p.trim p.ws
+          p.strip p.ws
           p.pipe [
             p.text "alice"
             p.tag "name"
@@ -245,160 +245,19 @@ do ->
 
       ]
 
-    test "append", do ->
+    test "assign"
 
-      parse = p.parser p.pipe [
-        p.append p.text "hello"
-        p.preserve p.trim p.ws
-        p.append p.text "alice"
-      ]
-
-      [
-
-        test "success", ->
-          assert.deepEqual [ "hello", "alice" ],
-            parse "hello alice"
-
-        test "failure", ->
-          assert.throws (-> parse "goodbye"),
-            message: 'parse error: expected "hello", got "goodbye"'
-
-      ]
-
-    test "append custom data", do ->
-
-      parse = p.parser p.pipe [
-        p.append "result", p.text "hello"
-        p.trim p.ws
-        p.append "result", p.text "alice"
-        p.get "result"
-      ]
-
-      [
-
-        test "success", ->
-          assert.deepEqual [ "hello", "alice" ],
-            parse "hello alice"
-
-        test "failure", ->
-          assert.throws (-> parse "goodbye"),
-            message: 'parse error: expected "hello", got "goodbye"'
-
-      ]
-
-    test "assign", do ->
-
-      parse = p.parser p.pipe [
-        p.assign "greeting", p.match p.text "hello"
-        p.preserve p.trim p.ws
-        p.assign "name", p.text "alice"
-      ]
-
-      [
-
-        test "success", ->
-          assert.deepEqual { name: "alice", greeting: "hello" },
-            parse "hello alice"
-
-        test "failure", ->
-          assert.throws (-> parse "goodbye"),
-            message: 'parse error: expected "hello", got "goodbye"'
-
-      ]
-
-    test "assign custom data", do ->
-
-      parse = p.parser p.pipe [
-        p.assign "result", "greeting", p.match p.text "hello"
-        p.trim p.ws
-        p.assign "result", "name", p.text "alice"
-        p.get "result"
-      ]
-
-      [
-
-        test "success", ->
-          assert.deepEqual { name: "alice", greeting: "hello" },
-            parse "hello alice"
-
-        test "failure", ->
-          assert.throws (-> parse "goodbye"),
-            message: 'parse error: expected "hello", got "goodbye"'
-
-      ]
-
+ 
     test "scenarios", [
-
-      test "nested list, significant whitespace", do ->
-
-        bol = p.skip p.pipe [
-          p.get "indent", []
-          p.apply p.all
-        ]
-
-        block = (f, g) -> p.push "indent", f, g
-
-        item = p.pipe [
-          p.all [
-            bol
-            p.any [
-              p.pipe [
-                p.all [
-                  p.skip "- "
-                  p.word
-                  p.skip p.eol
-                ]
-                p.first
-              ]
-              block (p.text "  "), p.forward -> list
-            ]
-          ]
-          p.first
-        ]
-
-        list = p.pipe [
-          p.lookahead /^\s*\-/, "list"
-          p.many item
-        ]
-
-        parse = p.parser list
-
-        [
-
-          test "success", ->
-
-            assert.deepEqual [
-              "fruits"
-              [ "apples", "bananas" ]
-              "vegetables"
-              [ "potatos" ]
-            ], parse """
-                - fruits
-                  - apples
-                  - bananas
-                - vegetables
-                  - potatos
-                """
-
-          test "failure", ->
-
-            assert.throws (->
-              parse """
-                - fruits
-                  apples
-                """),
-              message: 'parse error: expected end of input, got "  apples"'
-        ]
-
 
       test "expression grammar", do ->
 
         parse = p.parser p.pipe [
           p.all [
             p.re /^\d+/, "digit"
-            p.trim p.ws
+            p.strip p.ws
             p.re /^(\+|-)/, "operator"
-            p.trim p.ws
+            p.strip p.ws
             p.re /^\d+/, "digit"
           ]
           p.map ([x, op, y]) ->

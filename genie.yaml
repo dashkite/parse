@@ -23,9 +23,4 @@ presets:
   release: null
   esm: null
 
-sky:
-  collections:
-    - name: "modules.dashkite.io"
-      publish:
-        root: build/browser/src
-        target: parse/build/browser/src
+sky: {}
