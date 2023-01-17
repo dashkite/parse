@@ -31,10 +31,10 @@
     "test": "genie test"
   },
   "devDependencies": {
-    "@dashkite/amen": "^0.1.2",
-    "@dashkite/amen-console": "^0.0.1",
-    "@dashkite/assert": "^0.1.3",
-    "@dashkite/genie": "^0.5.2",
-    "@dashkite/genie-presets": "^0.2.2"
+    "@dashkite/amen": "^0.2.0",
+    "@dashkite/amen-console": "^0.0.2",
+    "@dashkite/assert": "^0.1.4",
+    "@dashkite/genie": "^0.5.11",
+    "@dashkite/genie-presets": "^0.6.0"
   }
 }
