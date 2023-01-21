@@ -28,7 +28,8 @@
     "build/node/src"
   ],
   "scripts": {
-    "test": "genie test"
+    "test": "genie test",
+    "build": "genie build"
   },
   "devDependencies": {
     "@dashkite/amen": "^0.2.0",
