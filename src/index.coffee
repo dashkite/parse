@@ -201,13 +201,17 @@ list = (d, x) ->
   d = pattern d
   pipe [
     all [
-      optional many all [
-        f
-        skip d
-      ]
       f
+      optional many pipe [
+        all [
+          skip d
+          f
+        ]
+        first
+      ]
     ]
-    flatten
+    map ([first, rest ]) ->
+      [ first, rest... ]
   ]
 
 between = (args...) ->

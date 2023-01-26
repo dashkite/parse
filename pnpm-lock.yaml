@@ -6,7 +6,7 @@ specifiers:
   '@dashkite/assert': ^0.1.4
   '@dashkite/genie': ^0.5.11
   '@dashkite/genie-modules': link:../genie-modules
-  '@dashkite/genie-presets': ^0.6.2
+  '@dashkite/genie-presets': ^0.6.4
 
 devDependencies:
   '@dashkite/amen': 0.2.0
@@ -14,7 +14,7 @@ devDependencies:
   '@dashkite/assert': 0.1.4
   '@dashkite/genie': 0.5.11
   '@dashkite/genie-modules': link:../genie-modules
-  '@dashkite/genie-presets': 0.6.2
+  '@dashkite/genie-presets': 0.6.4
 
 packages:
 
@@ -2079,8 +2079,8 @@ packages:
       '@dashkite/joy': 0.3.16
     dev: true
 
-  /@dashkite/atlas/0.5.2:
-    resolution: {integrity: sha512-um4JjsHgIpKPzQHRCX8T8foWZozjStTzFsUMaVVTDBwT5EuhBJpxJBBcQcSrvMmukNgrJfhpoTqU+9kNS9paRg==}
+  /@dashkite/atlas/0.6.1:
+    resolution: {integrity: sha512-5l/fLMHd5QsBiNxAaqw4ibS+Grdma0GlesaRtiUQwywtr3XMVeGHcNfEczLjgnesCDh02GuyzmlMaApoJecp6A==}
     dependencies:
       '@dashkite/joy': 0.3.16
       fast-glob: 3.2.12
@@ -2093,11 +2093,11 @@ packages:
       - supports-color
     dev: true
 
-  /@dashkite/genie-presets/0.6.2:
-    resolution: {integrity: sha512-3EeevHZqwK00faISFmV0Ah99qF7B9rB4LagtHRkriuVhYqWn44FQxdPjGTiseLHX+KHDn/h7yiRxhxlt0dpluA==}
+  /@dashkite/genie-presets/0.6.4:
+    resolution: {integrity: sha512-D97FVPYc0ersBOAWLOaY0bS9O/dvoDr10SB2mq63qM08bjopQJsPH+rZ/ienLCWpONFpa83B3274Xjz9wXSw5A==}
     dependencies:
       '@dashkite/joy': 0.3.16
-      '@dashkite/masonry': 0.12.5
+      '@dashkite/masonry': 0.12.7
       '@dashkite/mimic': 0.2.4
       '@dashkite/writeme': 0.2.0
       ajv: 8.12.0
@@ -2148,12 +2148,12 @@ packages:
       '@dashkite/joy': 0.3.16
     dev: true
 
-  /@dashkite/masonry/0.12.5:
-    resolution: {integrity: sha512-sPdMI3oUBlXV3E+6skiWVc0+iuIPJ0vmezxGbCRECoa4egK3P+O/dEqXcRWgXbtDIDbVcMgtB1rIt6q8FT2g5A==}
+  /@dashkite/masonry/0.12.7:
+    resolution: {integrity: sha512-39vKk91lA1TRmaHqEwCdoCy2/XrUnTi+7Mcheb4RuxiAjj/nS7G4VHW/O967qoK7aeBH0GEXTax5iu+mqngvwQ==}
     dependencies:
       '@babel/core': 7.20.12
       '@babel/preset-env': 7.20.2_@babel+core@7.20.12
-      '@dashkite/atlas': 0.5.2
+      '@dashkite/atlas': 0.6.1
       '@dashkite/joy': 0.3.16
       '@dashkite/katana': 0.4.8
       babel-plugin-add-import-extension: 1.6.0_@babel+core@7.20.12
