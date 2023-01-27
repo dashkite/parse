@@ -7,15 +7,17 @@ specifiers:
   '@dashkite/genie': ^0.5.11
   '@dashkite/genie-modules': link:../genie-modules
   '@dashkite/genie-presets': ^0.6.4
+  '@dashkite/joy': ^0.3.16
 
 dependencies:
-  '@dashkite/genie-modules': link:../genie-modules
+  '@dashkite/joy': 0.3.16
 
 devDependencies:
   '@dashkite/amen': 0.2.0
   '@dashkite/amen-console': 0.0.2
   '@dashkite/assert': 0.1.4
   '@dashkite/genie': 0.5.11
+  '@dashkite/genie-modules': link:../genie-modules
   '@dashkite/genie-presets': 0.6.4
 
 packages:
@@ -2142,7 +2144,6 @@ packages:
 
   /@dashkite/joy/0.3.16:
     resolution: {integrity: sha512-dsU0us4j1Pb+zceoBvLbnZ2PbmULkJUtM2vtWLxKmoc1DE4w9SVTiPTe6JWvF0A0vk90ldv+Lc9qEA5x3O+DtQ==}
-    dev: true
 
   /@dashkite/katana/0.4.8:
     resolution: {integrity: sha512-KOfMS5aRZItxPeMv0OXbOTCj5BZhN9jM190jae8HB7WgGB5uM5jEzRWmyh3yVbxTaL83o7csktRzUkxkr/Op1A==}

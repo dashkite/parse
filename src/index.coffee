@@ -197,13 +197,20 @@ list = Fn.curry (d, x) ->
 
   pipe [
     all [
-      optional many all [
-        f
-        skip d
-      ]
       f
+      optional many pipe [
+        all [
+          skip d
+          f
+        ]
+        first
+      ]
     ]
-    flatten
+    map ([first, rest ]) ->
+      if rest?
+        [ first, rest... ]
+      else
+        [ first ]
   ]
 
 between = Fn.curry (d, f) ->

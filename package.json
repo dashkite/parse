@@ -1,6 +1,6 @@
 {
   "name": "@dashkite/parse",
-  "version": "0.4.0",
+  "version": "0.4.2",
   "description": "Parser combinator library for JavaScript",
   "keywords": [
     "parser",
@@ -28,16 +28,18 @@
     "build/node/src"
   ],
   "scripts": {
-    "test": "genie test"
+    "test": "genie test",
+    "build": "genie build"
   },
   "devDependencies": {
     "@dashkite/amen": "^0.2.0",
     "@dashkite/amen-console": "^0.0.2",
     "@dashkite/assert": "^0.1.4",
     "@dashkite/genie": "^0.5.11",
+    "@dashkite/genie-modules": "link:../genie-modules",
     "@dashkite/genie-presets": "^0.6.4"
   },
   "dependencies": {
-    "@dashkite/genie-modules": "link:../genie-modules"
+    "@dashkite/joy": "^0.3.16"
   }
 }

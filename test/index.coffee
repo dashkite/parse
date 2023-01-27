@@ -171,13 +171,26 @@ do ->
 
       [
 
-        test "success", ->
-          assert.deepEqual ["1", "2", "3", "4"], parse "1,2,3,4"
+        test "success", [
+          
+          test "multiple items", ->
+            assert.deepEqual ["1", "2", "3", "4"], parse "1,2,3,4"
 
-        test "failure", ->
-          assert.throws (-> parse "1,2,3,"),
-            message: "parse error: expected /^\\d+/, got end of string"
+          test "one item", ->
+            assert.deepEqual ["1"], parse "1"
 
+        ]
+
+        test "failure", [
+          test "trailing delimiter", ->
+            assert.throws (-> parse "1,2,3,"),
+              message: "parse error: expected /^\\d+/, got end of string"
+
+          test "empty list", ->
+            assert.throws (-> parse "z"),
+              message: 'parse error: expected {}, got "z"'
+
+        ]
       ]
 
     test "test", do ->
