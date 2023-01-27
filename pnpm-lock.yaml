@@ -5,14 +5,18 @@ specifiers:
   '@dashkite/amen-console': ^0.0.2
   '@dashkite/assert': ^0.1.4
   '@dashkite/genie': ^0.5.11
-  '@dashkite/genie-presets': ^0.6.0
+  '@dashkite/genie-modules': link:../genie-modules
+  '@dashkite/genie-presets': ^0.6.4
+
+dependencies:
+  '@dashkite/genie-modules': link:../genie-modules
 
 devDependencies:
   '@dashkite/amen': 0.2.0
   '@dashkite/amen-console': 0.0.2
   '@dashkite/assert': 0.1.4
   '@dashkite/genie': 0.5.11
-  '@dashkite/genie-presets': 0.6.0
+  '@dashkite/genie-presets': 0.6.4
 
 packages:
 
@@ -2077,8 +2081,8 @@ packages:
       '@dashkite/joy': 0.3.16
     dev: true
 
-  /@dashkite/atlas/0.5.2:
-    resolution: {integrity: sha512-um4JjsHgIpKPzQHRCX8T8foWZozjStTzFsUMaVVTDBwT5EuhBJpxJBBcQcSrvMmukNgrJfhpoTqU+9kNS9paRg==}
+  /@dashkite/atlas/0.6.1:
+    resolution: {integrity: sha512-5l/fLMHd5QsBiNxAaqw4ibS+Grdma0GlesaRtiUQwywtr3XMVeGHcNfEczLjgnesCDh02GuyzmlMaApoJecp6A==}
     dependencies:
       '@dashkite/joy': 0.3.16
       fast-glob: 3.2.12
@@ -2091,11 +2095,11 @@ packages:
       - supports-color
     dev: true
 
-  /@dashkite/genie-presets/0.6.0:
-    resolution: {integrity: sha512-NkReC0yxiLfoyuAnOgEhkObz2syv1ESoaSV1qE0lIlhiLY3amGkRp1u5c+3JXuy/Iy5fNRO6EzoComkdG6YQAg==}
+  /@dashkite/genie-presets/0.6.4:
+    resolution: {integrity: sha512-D97FVPYc0ersBOAWLOaY0bS9O/dvoDr10SB2mq63qM08bjopQJsPH+rZ/ienLCWpONFpa83B3274Xjz9wXSw5A==}
     dependencies:
       '@dashkite/joy': 0.3.16
-      '@dashkite/masonry': file:../masonry
+      '@dashkite/masonry': 0.12.7
       '@dashkite/mimic': 0.2.4
       '@dashkite/writeme': 0.2.0
       ajv: 8.12.0
@@ -2144,6 +2148,29 @@ packages:
     resolution: {integrity: sha512-KOfMS5aRZItxPeMv0OXbOTCj5BZhN9jM190jae8HB7WgGB5uM5jEzRWmyh3yVbxTaL83o7csktRzUkxkr/Op1A==}
     dependencies:
       '@dashkite/joy': 0.3.16
+    dev: true
+
+  /@dashkite/masonry/0.12.7:
+    resolution: {integrity: sha512-39vKk91lA1TRmaHqEwCdoCy2/XrUnTi+7Mcheb4RuxiAjj/nS7G4VHW/O967qoK7aeBH0GEXTax5iu+mqngvwQ==}
+    dependencies:
+      '@babel/core': 7.20.12
+      '@babel/preset-env': 7.20.2_@babel+core@7.20.12
+      '@dashkite/atlas': 0.6.1
+      '@dashkite/joy': 0.3.16
+      '@dashkite/katana': 0.4.8
+      babel-plugin-add-import-extension: 1.6.0_@babel+core@7.20.12
+      cheerio: 1.0.0-rc.12
+      chokidar: 3.5.3
+      coffeescript: 2.7.0
+      execa: 5.1.1
+      fast-glob: 3.2.12
+      js-yaml: 4.1.0
+      marked: 3.0.8
+      pug: 3.0.2
+      stylus: 0.59.0
+    transitivePeerDependencies:
+      - bluebird
+      - supports-color
     dev: true
 
   /@dashkite/mimic/0.2.4:
@@ -4773,29 +4800,4 @@ packages:
     dependencies:
       buffer-crc32: 0.2.13
       fd-slicer: 1.1.0
-    dev: true
-
-  file:../masonry:
-    resolution: {directory: ../masonry, type: directory}
-    name: '@dashkite/masonry'
-    version: 0.12.5
-    dependencies:
-      '@babel/core': 7.20.12
-      '@babel/preset-env': 7.20.2_@babel+core@7.20.12
-      '@dashkite/atlas': 0.5.2
-      '@dashkite/joy': 0.3.16
-      '@dashkite/katana': 0.4.8
-      babel-plugin-add-import-extension: 1.6.0_@babel+core@7.20.12
-      cheerio: 1.0.0-rc.12
-      chokidar: 3.5.3
-      coffeescript: 2.7.0
-      execa: 5.1.1
-      fast-glob: 3.2.12
-      js-yaml: 4.1.0
-      marked: 3.0.8
-      pug: 3.0.2
-      stylus: 0.59.0
-    transitivePeerDependencies:
-      - bluebird
-      - supports-color
     dev: true
