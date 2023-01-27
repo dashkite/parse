@@ -211,7 +211,10 @@ list = (d, x) ->
       ]
     ]
     map ([first, rest ]) ->
-      [ first, rest... ]
+      if rest?
+        [ first, rest... ]
+      else
+        [ first ]
   ]
 
 between = (args...) ->
