@@ -7,6 +7,6 @@ preset t
 # because genie-modules uses graphene-core which relies on polaris
 t.define "publish", ->
   # TODO rewrite as dynamic import when we move to ESM in Node
-  modules = require "dashkite/genie-modules"
+  { default: modules } = require "@dashkite/genie-modules"
   modules t
-  t.run "sky:module:publish"
+  t.run "modules:publish"
