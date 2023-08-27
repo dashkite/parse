@@ -37,7 +37,7 @@
     "@dashkite/assert": "^0.1.4",
     "@dashkite/genie": "^0.5.11",
     "@dashkite/genie-modules": "link:../genie-modules",
-    "@dashkite/genie-presets": "^0.6.4"
+    "@dashkite/genie-presets": "^0.7.0"
   },
   "dependencies": {
     "@dashkite/joy": "^0.3.16"
