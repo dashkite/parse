@@ -286,10 +286,6 @@ parser = (f) ->
       data: {}
 
     if m.error?
-      # TODO compute line-number and position
-      # 1. find position
-      # 2. count the newlines up until that position
-      # 3. count characters until the first newline prior to position
       {expected, got} = m.error
       got = if got == "" then "end of string" else inspect got[..10]
       throw new Error "parse error:
