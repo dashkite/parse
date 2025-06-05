@@ -8,12 +8,12 @@ re = (x, expected) ->
     if (m = (c.rest.match x))?
       {c...
       value: m[0]
-      rest: R.rest[(m.index + m[0].length)..]}
+      rest: c.rest[(m.index + m[0].length)..]}
     else
       {c...
       error:
         expected: expected ? inspect x
-        got: R.rest}
+        got: c.rest}
 
 word = re /^\w+/, "word"
 
@@ -23,15 +23,15 @@ ws = re /^[ \t]+/s, "whitespace"
 
 text = (x) ->
   (c) ->
-    if R.rest[..(x.length - 1)] == x
+    if c.rest[..(x.length - 1)] == x
       {c...
       value: x
-      rest: R.rest[(x.length)..]}
+      rest: c.rest[(x.length)..]}
     else
       {c...
       error:
         expected: inspect x
-        got: R.rest}
+        got: c.rest}
 
 pattern = (x) ->
   if x.constructor == String
@@ -57,15 +57,15 @@ negate = (x, expected) ->
   f = pattern x
   (c) ->
     if (m = f c).error?
-      value = R.rest[0]
-      rest = R.rest[1..]
+      value = c.rest[0]
+      rest = c.rest[1..]
       {c..., value, rest }
     else
       {
-        R..., 
+        c..., 
         error:
           expected: expected ? inspect x
-          got: R.rest
+          got: c.rest
       }
 
 eof = (c) ->
@@ -75,7 +75,7 @@ eof = (c) ->
     {c...
     error:
       expected: "end of input"
-      got: R.rest}
+      got: c.rest}
 
 eol = re /^(\n|$)/, "end of line"
 
@@ -146,7 +146,7 @@ lookahead = (x, expected) ->
       {c...
       error:
         expected: expected ? inspect x
-        got: R.rest}
+        got: c.rest}
 
 pipe = (fx) ->
   (c) ->
@@ -156,7 +156,7 @@ pipe = (fx) ->
         return d
     d
 
-map = (f) -> (c) -> {c..., value: (f R.value)}
+map = (f) -> (c) -> {c..., value: (f c.value)}
 
 _flatten = (ax) ->
   if Array.isArray ax
@@ -183,13 +183,13 @@ last = map (ax) -> ax[ ax.length - 1 ]
 
 test = (name, f) ->
   (c) ->
-    if f R.value
+    if f c.value
       c
     else
       {c...
       error:
         expected: name
-        got: inspect R.value }
+        got: inspect c.value }
 
 list = Fn.curry (d, x) ->
   f = pattern x
@@ -234,7 +234,7 @@ tag = (key) -> map (value) -> [key]: value
 
 merge = (c) ->
   r = {}
-  for _tag in R.value
+  for _tag in c.value
     for key, value of _tag
       if r[key]?
         if Array.isArray r[key]
@@ -243,7 +243,7 @@ merge = (c) ->
           r[key] = [ r[key], value ]
       else
         r[key] = value
-  R.value = r
+  c.value = r
   c
 
 cat = map (ax) -> ax.join ""
@@ -262,11 +262,11 @@ log = (label) ->
 
 
 assign = (object) ->
-  Fn.tee (c) -> Object.assign R.data, object
+  Fn.tee (c) -> Object.assign c.data, object
  
 set = (key, value) ->
   (c) ->
-    value ?= R.value
+    value ?= c.value
     (c.data ?= {})[key] = value
     c
 
@@ -276,7 +276,7 @@ get = (key, _default) ->
     {c..., value}
 
 verify = (expected, f) -> (c) -> 
-  if f R.value then c else { R..., error: { expected, got: R.rest } }
+  if f c.value then c else { c..., error: { expected, got: c.rest } }
 
 parser = (f) ->
   (s) ->
