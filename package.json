@@ -39,7 +39,7 @@
     "@dashkite/genie": "^0.8.4",
     "@dashkite/genie-clean": "0.2.0",
     "@dashkite/genie-coffee": "0.2.0",
-    "@dashkite/genie-release": "^0.2.9"
+    "@dashkite/genie-release": "^0.2.10"
   },
   "dependencies": {
     "@dashkite/joy": "^0.3.16"
