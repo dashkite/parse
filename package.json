@@ -1,6 +1,6 @@
 {
   "name": "@dashkite/parse",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Parser combinator library for JavaScript",
   "keywords": [
     "parser",
