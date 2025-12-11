@@ -106,8 +106,11 @@ any = (fx) ->
         return {c..., m...}
     {c..., m...}
 
-many = (x) ->
+many = ( x, range = [ 0 ]) ->
   f = pattern x
+  [ min, max ] = range
+  min ?= 0
+  
   (c) ->
     d = c
     value = []
@@ -115,9 +118,10 @@ many = (x) ->
       if !(m = f d).error?
         value.push m.value if m.value?
         d = {d..., m..., value}
+        break if max? && value.length == max
       else
         break
-    if value.length > 0
+    if value.length >= range[0]
       {d..., value}
     else if m?
       {d..., m...}
@@ -286,13 +290,13 @@ parser = (f) ->
       data: {}
 
     if m.error?
-      {expected, got} = m.error
-      got = if got == "" then "end of string" else inspect got[..10]
+      { expected, got } = m.error
+      got = if got.length == 0 then "end of input" else inspect got[..5]
       throw new Error "parse error:
         expected #{expected}, got #{got}"
     else if m.rest.length > 0
       throw new Error "parse error:
-        expected end of input, got #{inspect m.rest[..10]}..."
+        expected end of input, got #{ inspect m.rest[..5]}..."
     else
       m.value
 
