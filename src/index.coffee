@@ -106,10 +106,8 @@ any = (fx) ->
         return {c..., m...}
     {c..., m...}
 
-many = ( x, range = [ 0 ]) ->
+many = ( x, min = 0, max = undefined ) ->
   f = pattern x
-  [ min, max ] = range
-  min ?= 0
   
   (c) ->
     d = c
@@ -121,7 +119,7 @@ many = ( x, range = [ 0 ]) ->
         break if max? && value.length == max
       else
         break
-    if value.length >= range[0]
+    if value.length >= min
       {d..., value}
     else if m?
       {d..., m...}
